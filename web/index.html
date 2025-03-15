@@ -126,11 +126,23 @@
               <option value="1">开启</option>
             </select>
           </div>
+          <hr />
+          <div class="form-group">
+            <label for="p9">Notion 数据库 ID</label>
+            <input type="text" class="form-control" id="p9" name="p9">
+            <small class="form-text text-muted">公开 Notion 数据库的 ID，用于随机显示内容</small>
+          </div>
+          <hr />
+          <div class="form-group">
+            <label for="p10">Notion 内容刷新间隔（分钟）</label>
+            <input type="number" class="form-control" id="p10" name="p10" min="1" max="1440">
+            <small class="form-text text-muted">设置 Notion 内容的刷新间隔，范围 1-1440 分钟</small>
+          </div>
         </fieldset>
         <button type="submit" id="submit" class="btn btn-primary">保存设置</button>
         <button type="button" class="btn btn-warning" data-mdb-toggle="modal"
           data-mdb-target="#exampleModal">电源选项</button>
-          <a class="btn btn-success" href="blockly">打开 Blockly IDE</a>
+        <a class="btn btn-success" href="blockly">打开 Blockly IDE</a>
       </form>
 
       <!-- Modal 电源选项 -->
@@ -154,7 +166,7 @@
         <legend>关于本机</legend>
         <p>作者：小李电子实验室<br /><a href="https://space.bilibili.com/213123506">点击打开UP主的Bilibili主页</a><br />2023年7月10日</p>
         <p>天气更新间隔其实也是全局刷新间隔<br /><a
-            style="color: brown;">数据来源：彩云天气</a><br />使用彩云天气“公共API”，仅限学习研究使用<br />GPS坐标请严格按此格式填写：<br />116.3975,39.9091<br />坐标只会使用HTTP协议发送给彩云天气服务器
+            style="color: brown;">数据来源：彩云天气</a><br />使用彩云天气"公共API"，仅限学习研究使用<br />GPS坐标请严格按此格式填写：<br />116.3975,39.9091<br />坐标只会使用HTTP协议发送给彩云天气服务器
         </p>
       </div>
       <div id="alertContainer"></div>

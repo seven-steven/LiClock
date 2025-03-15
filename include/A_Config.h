@@ -41,12 +41,12 @@
 #define SAMPLE_COUNT 10
 #define SAMPLE_STEP 1
 #define PX_PER_SAMPLE (SCREEN_WIDTH / SAMPLE_STEP / (SAMPLE_COUNT - 2))
-#define DEFAULT_CONFIG "{\"p1\":\"116.3975,39.9091\",\"p2\":\"15\",\"p3\":\"1\",\"p4\":\"23:30\",\"p5\":\"05:00\",\"p6\":\"\",\"p7\":\"\",\"p8\":\"0\"}"
+#define DEFAULT_CONFIG "{\"p1\":\"116.3975,39.9091\",\"p2\":\"15\",\"p3\":\"1\",\"p4\":\"23:30\",\"p5\":\"05:00\",\"p6\":\"\",\"p7\":\"\",\"p8\":\"0\",\"p9\":\"\",\"p10\":\"60\"}"
 typedef struct
 {
-    const uint8_t *data;
-    uint16_t width;
-    uint16_t height;
+  const uint8_t *data;
+  uint16_t width;
+  uint16_t height;
 } ico_desc;
 
 extern float rain_data_raw[];
@@ -67,9 +67,9 @@ extern U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;
 
 extern bool force_full_update;
 extern int part_refresh_count;
-extern uint8_t night_sleep;          // 夜间模式屏幕状态，0：不在夜间模式，1：晚安，2：早上好
+extern uint8_t night_sleep;       // 夜间模式屏幕状态，0：不在夜间模式，1：晚安，2：早上好
 extern uint8_t night_sleep_today; // 今天是否进入过夜间模式
-extern bool LuaRunning;            //全局变量，表示Lua服务器是否运行，用于防止调试时误退出
+extern bool LuaRunning;           // 全局变量，表示Lua服务器是否运行，用于防止调试时误退出
 
 #define PARAM_GPS "p1"
 #define PARAM_FULLUPDATE "p2"
@@ -79,6 +79,8 @@ extern bool LuaRunning;            //全局变量，表示Lua服务器是否运�
 #define PARAM_SSID "p6"
 #define PARAM_PASS "p7"
 #define PARAM_CLOCKONLY "p8"
+#define PARAM_NOTION_DATABASE "p9"
+#define PARAM_NOTION_REFRESH "p10"
 
 void processRain(float max);
 void beginWebServer();
