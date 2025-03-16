@@ -1,6 +1,7 @@
 #include "AppManager.h"
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include "NotionDB.h" // 引入 NotionDB 头文件
 
 // #define notion_width 32
 // #define notion_height 32
@@ -39,12 +40,12 @@ static void appNotionRandom_wakeup();
 class AppNotionRandom : public AppBase
 {
 private:
-  String databaseId;              // Notion 数据库ID
-  String currentContent;          // 当前显示的内容
-  String createTime;              // 页面创建时间
-  int refreshInterval;            // 刷新时间间隔(分钟)
-  DynamicJsonDocument doc{16384}; // JSON解析文档
-  bool configValid;               // 配置是否有效
+  String databaseId;     // Notion 数据库ID
+  String currentContent; // 当前显示的内容
+  String createTime;     // 页面创建时间
+  int refreshInterval;   // 刷新时间间隔(分钟)
+  NotionDB notionDB;     // NotionDB 实例
+  bool configValid;      // 配置是否有效
 
   /**
    * @brief 从公开Notion数据库中随机获取一个页面的内容
@@ -55,57 +56,21 @@ private:
   bool getRandomPage()
   {
     Serial.println("\n[NotionRandom] 开始获取随机页面");
-    HTTPClient http;
 
-    // 构建Notion API请求URL (公开数据库)
-    String url = "https://notion-api.splitbee.io/v1/table/" + databaseId;
-    Serial.println("[NotionRandom] 请求URL: " + url);
+    // 使用 NotionDB 获取随机记录
+    DynamicJsonDocument record = notionDB.getRandomRecord(databaseId);
 
-    // 发送HTTP请求
-    http.begin(url);
-    Serial.println("[NotionRandom] 发送GET请求...");
-    int httpCode = http.GET();
-
-    // 检查HTTP响应状态
-    if (httpCode != HTTP_CODE_OK)
+    // 检查是否成功获取记录
+    if (record.size() == 0)
     {
-      Serial.printf("[NotionRandom] HTTP请求失败, 状态码: %d\n", httpCode);
-      http.end();
+      Serial.println("[NotionRandom] 错误：无法获取数据库记录");
       return false;
     }
-
-    // 获取响应数据
-    String response = http.getString();
-    Serial.println("[NotionRandom] 收到响应数据长度: " + String(response.length()) + " 字节");
-    http.end();
-
-    // 解析JSON数据
-    DeserializationError error = deserializeJson(doc, response);
-    if (error)
-    {
-      Serial.printf("[NotionRandom] JSON解析失败: %s\n", error.c_str());
-      return false;
-    }
-
-    // 检查数据库是否为空
-    JsonArray results = doc.as<JsonArray>();
-    int totalPages = results.size();
-    Serial.printf("[NotionRandom] 数据库中共有 %d 个页面\n", totalPages);
-    if (totalPages == 0)
-    {
-      Serial.println("[NotionRandom] 错误：数据库为空");
-      return false;
-    }
-
-    // 随机选择一个页面
-    int randomIndex = random(totalPages);
-    Serial.printf("[NotionRandom] 随机选择第 %d 个页面\n", randomIndex + 1);
-    JsonObject page = results[randomIndex];
 
     // 提取创建时间 (如果存在)
-    if (page.containsKey("Created"))
+    if (record.containsKey("Created"))
     {
-      createTime = page["Created"].as<String>();
+      createTime = record["Created"].as<String>();
       // 处理日期格式，获取YYYY-MM-DD
       if (createTime.length() > 10)
       {
@@ -119,20 +84,8 @@ private:
       Serial.println("[NotionRandom] 页面没有创建时间信息");
     }
 
-    // 提取页面内容 (搜索文本内容字段)
-    currentContent = "";
-    for (JsonPair kv : page)
-    {
-      // 跳过创建时间字段
-      if (String(kv.key().c_str()) != "Created")
-      {
-        String value = kv.value().as<String>();
-        if (value.length() > 0)
-        {
-          currentContent += String(kv.key().c_str()) + ": " + value + "\n\n";
-        }
-      }
-    }
+    // 使用 NotionDB 提取文本内容
+    currentContent = notionDB.extractText(record);
 
     if (currentContent.length() == 0)
     {
@@ -163,6 +116,7 @@ private:
 
     // 显示创建时间
     u8g2Fonts.setCursor(10, 25);
+    u8g2Fonts.setFontMode(1);
     u8g2Fonts.printf("创建于: %s", createTime.c_str());
 
     // 显示内容
