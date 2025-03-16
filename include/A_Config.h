@@ -41,7 +41,7 @@
 #define SAMPLE_COUNT 10
 #define SAMPLE_STEP 1
 #define PX_PER_SAMPLE (SCREEN_WIDTH / SAMPLE_STEP / (SAMPLE_COUNT - 2))
-#define DEFAULT_CONFIG "{\"p1\":\"116.3975,39.9091\",\"p2\":\"15\",\"p3\":\"1\",\"p4\":\"23:30\",\"p5\":\"05:00\",\"p6\":\"\",\"p7\":\"\",\"p8\":\"0\",\"p9\":\"\",\"p10\":\"60\"}"
+#define DEFAULT_CONFIG "{\"p1\":\"116.3975,39.9091\",\"p2\":\"15\",\"p3\":\"1\",\"p4\":\"23:30\",\"p5\":\"05:00\",\"p6\":\"\",\"p7\":\"\",\"p8\":\"0\",\"p9\":\"1b68b338846a80dc8fb3f5f84f10704e\",\"p10\":\"60\"}"
 typedef struct
 {
   const uint8_t *data;
